@@ -4,14 +4,13 @@ const authorText = document.getElementById("author");
 const twitterBtn = document.getElementById("twitter");
 const newQuote = document.getElementById("new-quote");
 const loader = document.getElementById("loader");
+let maxApiExpectedError = 10;
 
-// Show Loading
-function loading() {
+function showLoadingSpinner() {
   loader.hidden = false;
   quoteContainer.hidden = true;
 }
-//Hide Loading
-function complete() {
+function removeLoadingSpinner() {
   if (!loader.hidden) {
     quoteContainer.hidden = false;
     loader.hidden = true;
@@ -19,13 +18,12 @@ function complete() {
 }
 // Get Quote From API
 async function getQuote() {
-  loading();
-  // Using an intermediate server to get quotes because of CORS policy
-  const proxyUrl = "https://cors-anywhere.herokuapp.com/";
+  showLoadingSpinner();
+  const proxyUrlToBypassCorsPolicy = "https://cors-anywhere.herokuapp.com/";
   const apiUrl =
     "http://api.forismatic.com/api/1.0/?method=getQuote&lang=en&format=json";
   try {
-    const response = await fetch(proxyUrl + apiUrl);
+    const response = await fetch(proxyUrlToBypassCorsPolicy + apiUrl);
     const data = await response.json();
 
     // If Author is blank, add 'Unkown'
@@ -37,11 +35,13 @@ async function getQuote() {
       ? quoteText.classList.add("long-quote")
       : quoteText.classList.remove("long-quote");
     quoteText.innerText = data.quoteText;
-    //Stop Loader, and Show Quote
-    complete();
+
+    removeLoadingSpinner();
   } catch (error) {
-    getQuote();
-    console.log("Whoops! ", error);
+    maxApiExpectedError--;
+    maxApiExpectedError > 0
+      ? getQuote()
+      : console.log("Whoops! Cann't get quotes from server: ", error);
   }
 }
 
