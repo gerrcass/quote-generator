@@ -19,7 +19,8 @@ function removeLoadingSpinner() {
 // Get Quote From API
 async function getQuote() {
   showLoadingSpinner();
-  const proxyUrlToBypassCorsPolicy = "https://cors-anywhere.herokuapp.com/";
+  const proxyUrlToBypassCorsPolicy =
+    "https://nameless-earth-40489.herokuapp.com/";
   const apiUrl =
     "http://api.forismatic.com/api/1.0/?method=getQuote&lang=en&format=json";
   try {
